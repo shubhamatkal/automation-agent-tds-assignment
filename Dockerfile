@@ -4,11 +4,12 @@ FROM python:3.9-slim
 # Set the working directory
 WORKDIR /automation-agent-tds-assignment
 
-# Copy and install dependencies separately for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./packages /app/packages
 
-# Copy the rest of the project files
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt --find-links ./packages
+
 COPY . .
 
 # Expose the FastAPI server port
