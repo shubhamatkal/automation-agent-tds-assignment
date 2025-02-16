@@ -8,7 +8,6 @@ def get_task_output(AIPROXY_TOKEN, task):
     client = OpenAI(api_key = AIPROXY_TOKEN)
     response = client.chat.completions.create(
     model="gpt-4o-mini",
-    store=True,
     messages=[
         {"role": "user", "content": task}
     ]

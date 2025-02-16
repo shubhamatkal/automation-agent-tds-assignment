@@ -10,20 +10,30 @@ with open(".env") as f:
             l=line.split("=")
             key,value = l[0],l[1]
             AIPROXY_TOKEN = value
-            # print(AIPROXY_TOKEN)
+            print(AIPROXY_TOKEN) 
     except:
         print("Setup the enviroment variables...")
 app = FastAPI()
+
+
 ### /run and /read
 @app.get("/read")
 async def read_file(path: str):
-        if not path.startswith("/data"):
-             raise HTTPException(status_code = 403, detail = "Access to file is not allowed")
-        if not os.path.exists(path):
-             raise HTTPException(status_code = 404 , detail = "File is not found")
-        file = open(path, "r")
-        content = file.read()
-        return {"content": content}
+
+    print(f"Checking file path: {path}")  # Debugging output
+    # Convert to absolute path using os.getcwd()
+    abs_path = path  # Remove leading slash and join
+
+    # Debugging print (Remove after testing)
+    print(f"Checking file path: {abs_path}")
+    if not path.startswith("/data"):
+            raise HTTPException(status_code = 403, detail = "Access to file is not allowed")
+    if not os.path.exists(abs_path):
+            raise HTTPException(status_code = 404 , detail = "File is not found")
+    file = open(abs_path, "r")
+    content = file.read()
+    return {"content": content}
+
 @app.post("/run")
 async def run_task(task: str):
     try:
