@@ -5,15 +5,23 @@ from fuzzywuzzy import fuzz
 from datetime import datetime
 from openai import OpenAI
 def get_task_output(AIPROXY_TOKEN, task):
-    client = OpenAI(api_key = AIPROXY_TOKEN)
-    response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "user", "content": task}
-    ]
-    )
-    # print(response.choices[0].message.content.strip())
-    return response.choices[0].message.content.strip()
+    url = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"  # Updated proxy URL
+    headers = {
+        "Authorization": f"Bearer {AIPROXY_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": task}]
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"].strip()
+    else:
+        return f"Error: {response.status_code} - {response.text}"
+        
 def count_days(dayname:str):
     ## count sundays instead of sunday
     days = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
